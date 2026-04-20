@@ -28,18 +28,18 @@ def load_words(filename):
 def index():
     return render_template('index.html')
 
-# 問題データを取得する（通常モード用）
+# 問題データを送る処理（通常モードのみサーバーが行う）
 @app.route('/get_words', methods=['POST'])
 def get_words():
     data = request.json
     question_count = int(data.get('count', 10))
-    ranges = data.get('ranges', [[1, 2021]]) # システム英単語の範囲に合わせて調整可
+    ranges = data.get('ranges', [[1, 2021]]) # システム英単語の範囲(1〜2021)
     
-    # ここはご自身のCSVファイル名に合わせて変更してください（例: sys-tan.csv など）
-    all_words = load_words('target1900.csv') 
+    # 全単語リストのCSVファイル名を 'words.csv' に指定
+    all_words = load_words('words.csv')
     
     if not all_words:
-        return jsonify({"error": "単語データが見つかりません。CSVファイル名を確認してください。"})
+        return jsonify({"error": "データが見つかりません。words.csvを確認してください。"})
         
     filtered_words = []
     for w in all_words:
@@ -56,7 +56,7 @@ def get_words():
             continue
     
     if not filtered_words:
-        return jsonify({"error": "選択された範囲に単語がありません。"})
+        return jsonify({"error": "選択された範囲に単語がありません。範囲指定を確認してください。"})
         
     sample_size = min(question_count, len(filtered_words))
     words = random.sample(filtered_words, sample_size)
