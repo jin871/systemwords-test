@@ -28,14 +28,12 @@ def load_words(filename):
 def index():
     return render_template('index.html')
 
-# 問題データを送る処理
 @app.route('/get_words', methods=['POST'])
 def get_words():
     data = request.json
     question_count = int(data.get('count', 10))
-    ranges = data.get('ranges', [[1, 2027]]) # デフォルト範囲を2027までに設定
+    ranges = data.get('ranges', [[1, 2027]])
     
-    # 全単語リスト
     all_words = load_words('words.csv')
     
     if not all_words:
@@ -56,7 +54,7 @@ def get_words():
             continue
     
     if not filtered_words:
-        return jsonify({"error": "選択された範囲に単語がありません。範囲設定を確認してください。"})
+        return jsonify({"error": "選択された範囲に単語がありません。"})
         
     sample_size = min(question_count, len(filtered_words))
     words = random.sample(filtered_words, sample_size)
